@@ -3,6 +3,7 @@
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
+| "'"      { strlit lexbuf }
 | '('      { LPAREN }
 | ')'      { RPAREN }
 | '['      { LSQRPAREN }
@@ -39,7 +40,7 @@ rule token = parse
 | "bool"   { BOOLEAN }
 | "string" { STRING }
 | "enum"   { ENUM }
-| ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) } (* TODO: include floats, strings *)
+| ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) } (* TODO: include floats *)
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | "true"   { TRUE }
 | "false"  { FALSE }
@@ -49,3 +50,7 @@ rule token = parse
 and comment = parse
   "*/" { token lexbuf }
 | _    { comment lexbuf }
+
+and strlit = parse
+  "'" {token lexbuf}
+| _   { _::(strlit lexbuf) } 
