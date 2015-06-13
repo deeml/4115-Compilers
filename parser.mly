@@ -15,6 +15,7 @@
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
+%nonassoc UMINUS
 
 %start program
 %type <Ast.program> program
@@ -71,6 +72,7 @@ expr:
   | ID               { Id($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
+  | MINUS Expr %prec UMINUS { - $2 }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
   | expr DIVIDE expr { Binop($1, Div,   $3) }
   | expr EQ     expr { Binop($1, Equal, $3) }
