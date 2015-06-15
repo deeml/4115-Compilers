@@ -1,0 +1,21 @@
+ProbL CFG reference
+-------------------------------------------------------
+
+program -> decl program | stmt program | ''
+decl    -> fdecl | vdecl | mdecl
+vdecl   -> type ID | type ID ;
+fdecl   -> 'fun' ID ( formals ) : type { block }
+mdecl   -> 'input' { vdecl_list } 'output' { vdecl_list }
+block   -> decl block | stmt block | ''
+stmt    -> expr ;
+         | if ( expr ) { block }
+         | if ( expr ) { block } else { block }
+         | while ( expr ) { block }
+         | for ( expr ; expr ; expr ) { block }
+         | return expr ;
+
+expr    -> expr op expr | ID ( actuals ) | literal | - expr
+op      -> [any operator]
+vdecl_list -> vdecl vdecl_list | ''
+formals -> ID , formals | ''
+actuals -> ID , actuals | literal , actuals | expr | actuals | ''
