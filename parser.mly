@@ -48,6 +48,9 @@ vdecl_list:
 
 vdecl:
    INT ID SEMI { $2 }
+   | FLOAT ID SEMI { $2 }
+   | BOOLEAN ID SEMI { $2 }
+   | STRING ID SEMI { $2 }
 
 stmt_list:
     /* nothing */  { [] }
