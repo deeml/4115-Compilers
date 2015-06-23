@@ -1,5 +1,13 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
+type t = 
+    Int of string
+  | Float of string
+  | Boolean of string
+  | String of string
+  (*| Array of t * int
+   TODO: array, add 2d arrays, enums *)
+
 type expr =
     Literal of int
   | Id of string
