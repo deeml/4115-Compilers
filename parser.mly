@@ -7,7 +7,7 @@
 %token LOGICALNOT LOGICALAND LOGICALOR
 %token FUNC 
 %token INT FLOAT BOOLEAN STRING ENUM
-%token INPUT OUTPUT
+%token INPUT OUTPUT MODEL
 %token <int> INT_LITERAL
 %token <string> STRING_LITERAL
 %token <float> FLOAT_LITERAL
@@ -31,26 +31,34 @@
 %%
 
 program:
-   /* nothing */ { [], [] }
- | program vdecl { ($2 :: fst $1), snd $1 }
- | program fdecl { fst $1, ($2 :: snd $1) }
+    /* nothing */ { [], [], [], [] }
+ | INPUT RBRACE vdecl_list LBRACE OUTPUT LBRACE vdecl_list RBRACE fdecl_list
+   MODEL LBRACE stmt_list RBRACE { $3, $7, $9, $12 }
 
 fdecl_list:
     /* nothing */ { [] }
   | fdecl_list fdecl { $2 :: $1 }
 
 fdecl:
-   FUNC ID LPAREN formals_opt RPAREN COLON type LBRACE block RBRACE
-     { { fname = $1;
-	 formals = $3;
-	 body = $9 } }
+   FUNC ID LPAREN formals_opt RPAREN COLON dtype LBRACE block RBRACE
+     { { fname = $2;
+	 formals = $4;
+     body = $9;
+     ret_type = $7 } }
+     
 
-type: 
+dtype: 
+    INT     { Int }
+  | FLOAT   { Float }
+  | BOOLEAN { Boolean }
+  | STRING  { String }
+  | ENUM    { Enum }
+/*  | dtype LSQPAREN INT_LITERAL RSQPAREN { Array($1, $3) } */
 
 block:
     /* nothing */  { [], [] }
   | vdecl block { ($1::fst $2) , snd $2 }
-  | stmnt block { fst $2, ($1::snd $2) }
+  | stmt block { fst $2, ($1::snd $2) }
 
 formals_opt:
     /* nothing */ { [] }
@@ -65,10 +73,14 @@ vdecl_list:
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   INT ID SEMI { $2 }
-   | FLOAT ID SEMI { $2 }
-   | BOOLEAN ID SEMI { $2 }
-   | STRING ID SEMI { $2 }
+   INT ID SEMI { { vname = $2, vtype = Int } }
+ | FLOAT ID SEMI { { vname = $2, vtype = Float } }
+ | BOOLEAN ID SEMI { { vname = $2, vtype = Boolean } }
+ | STRING ID SEMI { { vname = $2, vtype = String } }
+ | ENUM ID SEMI { { vname = $2, vtype = Enum } }
+ /* TODO: arrays, enums */
+
+
 
 stmt_list:
     /* nothing */  { [] }
@@ -77,12 +89,12 @@ stmt_list:
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
-  | LBRACE stmt_list RBRACE { Block(List.rev $2) }
-  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
-     { For($3, $5, $7, $9) }
-  | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
+  | IF LPAREN expr RPAREN LBRACE block RBRACE %prec NOELSE { If($3, $6, Block([])) }
+  | IF LPAREN expr RPAREN LBRACE block RBRACE ELSE LBRACE block RBRACE  
+     { If($3, $6, $10) }
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE block RBRACE
+     { For($3, $5, $7, $10) }
+  | WHILE LPAREN expr RPAREN LBRACE block RBRACE { While($3, $6) }
 
 expr_opt:
     /* nothing */ { Noexpr }

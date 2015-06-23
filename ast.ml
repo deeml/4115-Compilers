@@ -1,12 +1,13 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
-type t = 
-    Int of string
-  | Float of string
-  | Boolean of string
-  | String of string
-  (*| Array of t * int
-   TODO: array, add 2d arrays, enums *)
+type dtype = 
+    Int
+  | Float
+  | Boolean
+  | String
+  | Enum
+  (* | Array of dtype * int *)
+   (* TODO: array, add 2d arrays, enums *)
 
 type expr =
     Literal of int
@@ -24,14 +25,19 @@ type stmt =
   | For of expr * expr * expr * stmt
   | While of expr * stmt
 
+type var_decl = {
+    vname : string;
+    vtype : dtype;
+  }
+  
 type func_decl = {
     fname : string;
-    formals : string list;
-    locals : string list;
+    formals : var_decl list; 
     body : stmt list;
+    ret_type : dtype;
   }
 
-type program = input list * output list * func_decl list * model list
+type program = var_decl list * var_decl list * func_decl list * stmt list
 
 let rec string_of_expr = function
     Literal(l) -> string_of_int l

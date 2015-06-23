@@ -3,8 +3,6 @@ ProbL CFG reference
 
 program -> 'input' { vdecl_list } 'output' { vdecl_list } fdecl_list 'model' { stmt_list }
 
-// decl program | stmt program | ''
-
 vdecl_list -> vdecl vdecl_list | ''
 
 fdecl_list -> fdecl fdecl_list | ''
@@ -22,16 +20,18 @@ stmt    -> expr ;
          | for ( expr ; expr ; expr ) { block }
          | return expr ;
 
-// decl    -> fdecl | vdecl | mdecl
-// mdecl   -> 'input' { vdecl_list } 'output' { vdecl_list } block 'model' { stmt_list }
-
 block   -> vdecl block | stmt block | ''
 
 formals -> type ID , formals | ''
 
+actuals -> ID , actuals | literal , actuals | expr , actuals | ''
+
 expr    -> expr op expr | ID ( actuals ) | literal | - expr 
          | ID = expr | ID ~ expr
 
-op      -> [any operator]
+op      -> + | - | / | * | ^ | % 
+         | 'and' | 'or' | 'not'
+         | == | < | > | <= | >=
 
-actuals -> ID , actuals | literal , actuals | expr , actuals | ''
+type    -> 'int' | 'float' | 'string' | 'bool' | 'enum' | type '[]'
+
