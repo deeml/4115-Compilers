@@ -35,6 +35,10 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
+fdecl_list:
+    /* nothing */ { [] }
+  | fdecl_list fdecl { $2 :: $1 }
+
 fdecl:
    ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      { { fname = $1;
