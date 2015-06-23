@@ -40,11 +40,17 @@ fdecl_list:
   | fdecl_list fdecl { $2 :: $1 }
 
 fdecl:
-   ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+   FUNC ID LPAREN formals_opt RPAREN COLON type LBRACE block RBRACE
      { { fname = $1;
 	 formals = $3;
-	 locals = List.rev $6;
-	 body = List.rev $7 } }
+	 body = $9 } }
+
+type: 
+
+block:
+    /* nothing */  { [], [] }
+  | vdecl block { ($1::fst $2) , snd $2 }
+  | stmnt block { fst $2, ($1::snd $2) }
 
 formals_opt:
     /* nothing */ { [] }
