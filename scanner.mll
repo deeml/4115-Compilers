@@ -42,6 +42,7 @@ rule token = parse
 | "enum"   { ENUM }
 | "input"  { INPUT }
 | "output" { OUTPUT }
+| "model"  { MODEL }
 | ['0'-'9']*['.']['0'-'9']+ as lxm { FLOAT_LITERAL (float_of_string lxm) }
 | ['0'-'9']+ as lxm { INT_LITERAL(int_of_string lxm) }
 | '\''[ _ ]*'\'' as lxm { STRING_LITERAL(lxm) }
