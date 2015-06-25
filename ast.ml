@@ -33,6 +33,7 @@ type var_decl = {
 type func_decl = {
     fname : string;
     formals : var_decl list; 
+    locals : var_decl list;
     body : stmt list;
     ret_type : dtype;
   }
@@ -67,11 +68,23 @@ let rec string_of_stmt = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-let string_of_vdecl id = "int " ^ id ^ ";\n"
+let string_of_dtype = function
+    Int -> "int"
+  | Float -> "float"
+  | String -> "char*"
+  | Boolean -> "bool"
+  | Enum -> "int" (* TODO: fix this *)
+
+
+let string_of_vdecl vdecl = 
+  string_of_dtype vdecl.vtype ^ " " ^ vdecl.vname
+
+(*let string_of_formal_vdecl var_d = string_of_vdecl var_d ^ ", " *)
+let string_of_vdecl_semi var_d = string_of_vdecl var_d  ^ ";\n"
 
 let string_of_fdecl fdecl =
-  fdecl.fname ^ "(" ^ String.concat ", " fdecl.formals ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
+  string_of_dtype fdecl.ret_type ^ " " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
+  String.concat "" (List.map string_of_vdecl_semi fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 

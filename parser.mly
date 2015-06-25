@@ -40,10 +40,11 @@ fdecl_list:
   | fdecl_list fdecl { $2 :: $1 }
 
 fdecl:
-   FUNC ID LPAREN formals_opt RPAREN COLON dtype LBRACE block RBRACE
+   FUNC ID LPAREN formals_opt RPAREN COLON dtype LBRACE vdecl_list stmt_list RBRACE
      { { fname = $2;
-	 formals = $4;
-     body = $9;
+	   formals = $4;
+     body = $10;
+     locals = $9;
      ret_type = $7 } }
      
 
@@ -57,7 +58,7 @@ dtype:
 
 block:
     /* nothing */  { [], [] }
-  | vdecl block { ($1::fst $2) , snd $2 }
+  | vdecl_opt block { ($1::fst $2) , snd $2 }
   | stmt block { fst $2, ($1::snd $2) }
 
 formals_opt:
@@ -65,20 +66,24 @@ formals_opt:
   | formal_list   { List.rev $1 }
 
 formal_list:
-    ID                   { [$1] }
-  | formal_list COMMA ID { $3 :: $1 }
+  | type_decl                  { [$1] }
+  | formal_list COMMA type_decl { $3 :: $1 }
+
+type_decl:
+    INT ID { { vname = $2; vtype = Int } }
+  | FLOAT ID  { { vname = $2; vtype = Float } }
+  | BOOLEAN ID  { { vname = $2; vtype = Boolean } }
+  | STRING ID  { { vname = $2; vtype = String } }
+  /*TODO: add enums and arrays */
+
+
+vdecl_opt:
+    /* nothing */ { [] }
+  | vdecl_list   { List.rev $1 }
 
 vdecl_list:
-    /* nothing */    { [] }
-  | vdecl_list vdecl { $2 :: $1 }
-
-vdecl:
-   INT ID SEMI { { vname = $2, vtype = Int } }
- | FLOAT ID SEMI { { vname = $2, vtype = Float } }
- | BOOLEAN ID SEMI { { vname = $2, vtype = Boolean } }
- | STRING ID SEMI { { vname = $2, vtype = String } }
- | ENUM ID SEMI { { vname = $2, vtype = Enum } }
- /* TODO: arrays, enums */
+  | type_decl                  { [$1] }
+  | vdecl_list COMMA type_decl SEMI { $3 :: $1 }
 
 
 
@@ -89,12 +94,12 @@ stmt_list:
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
-  | IF LPAREN expr RPAREN LBRACE block RBRACE %prec NOELSE { If($3, $6, Block([])) }
-  | IF LPAREN expr RPAREN LBRACE block RBRACE ELSE LBRACE block RBRACE  
+  | IF LPAREN expr RPAREN LBRACE stmt RBRACE %prec NOELSE { If($3, $6, Block([])) }
+  | IF LPAREN expr RPAREN LBRACE stmt RBRACE ELSE LBRACE stmt RBRACE  
      { If($3, $6, $10) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE block RBRACE
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE stmt RBRACE
      { For($3, $5, $7, $10) }
-  | WHILE LPAREN expr RPAREN LBRACE block RBRACE { While($3, $6) }
+  | WHILE LPAREN expr RPAREN LBRACE stmt RBRACE { While($3, $6) }
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -105,7 +110,7 @@ expr:
   | ID               { Id($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
-  | MINUS expr %prec UMINUS { - $2 }
+  | MINUS expr %prec UMINUS { Binop(Literal(0), Sub, $2) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
   | expr DIVIDE expr { Binop($1, Div,   $3) }
   | expr EQ     expr { Binop($1, Equal, $3) }
