@@ -1,14 +1,15 @@
 TODO:
+===========scanner.mll=================
+
+- built-in function names
 
 ============parser.mly=================
 
 - array and enum typing; possibly using a separate type from other variable
   declarations
-- ocamlyacc won't recognize things defined in ast ( like Expr(...) )
 
 ==============ast.ml===================
 
-- array and enum type (compound variable declaration type?)
-- code generation / 'pretty printing' functions (?)
+- array and enum type 
 
-
+============generator.ml===============

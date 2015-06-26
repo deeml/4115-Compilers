@@ -94,23 +94,24 @@ stmt_list:
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
-  | IF LPAREN expr RPAREN LBRACE stmt RBRACE %prec NOELSE { If($3, $6, Block([])) }
-  | IF LPAREN expr RPAREN LBRACE stmt RBRACE ELSE LBRACE stmt RBRACE  
+  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE %prec NOELSE { If($3, $6, Block([])) }
+  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE  
      { If($3, $6, $10) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE stmt RBRACE
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE stmt_list RBRACE
      { For($3, $5, $7, $10) }
-  | WHILE LPAREN expr RPAREN LBRACE stmt RBRACE { While($3, $6) }
+  | WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE { While($3, $6) }
 
 expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
 
 expr:
-    INT_LITERAL          { Literal($1) }
+    INT_LITERAL      { Int_literal($1) }
+  | STRING_LITERAL   { String_literal($1) }
   | ID               { Id($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
-  | MINUS expr %prec UMINUS { Binop(Literal(0), Sub, $2) }
+  | MINUS expr %prec UMINUS { Binop(Int_literal(0), Sub, $2) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
   | expr DIVIDE expr { Binop($1, Div,   $3) }
   | expr EQ     expr { Binop($1, Equal, $3) }

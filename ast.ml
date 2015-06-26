@@ -10,7 +10,8 @@ type dtype =
    (* TODO: array, add 2d arrays, enums *)
 
 type expr =
-    Literal of int
+    String_literal of string
+  | Int_literal of int
   | Id of string
   | Binop of expr * op * expr
   | Assign of string * expr
@@ -18,12 +19,12 @@ type expr =
   | Noexpr
 
 type stmt =
-    Block of stmt list
+    Block of stmt
   | Expr of expr
   | Return of expr
-  | If of expr * stmt * stmt
-  | For of expr * expr * expr * stmt
-  | While of expr * stmt
+  | If of expr * stmt list * stmt list
+  | For of expr * expr * expr * stmt list
+  | While of expr * stmt list
 
 type var_decl = {
     vname : string;
@@ -40,8 +41,11 @@ type func_decl = {
 
 type program = var_decl list * var_decl list * func_decl list * stmt list
 
+(* code generation moved to generator.ml *)
+
+(* 
 let rec string_of_expr = function
-    Literal(l) -> string_of_int l
+    String_literal(l) -> l
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
@@ -91,3 +95,5 @@ let string_of_fdecl fdecl =
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)
+*)
+
