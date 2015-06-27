@@ -5,12 +5,15 @@ open Ast
 let string_of_type = function 
       Int -> "int"
     | Float -> "double"
-    | String -> "char *"
-    | Boolean -> "int"
-    | Enum -> "typedef enum"
+    | String -> "String"
+    | Boolean -> "boolean"
+    | Enum -> "enum"
 
-(* type declaration *)
+(* loval variable declaration *)
 let string_of_vdecl vd = string_of_type vd.vtype ^ " " ^ vd.vname ^";\n"
+
+(* global variable declaration*)
+let string_of_global g = "public " ^ string_of_type g.vtype ^ " " ^ g.vname ^ ";\n"
 
 (* expressions *)
 let rec string_of_expr = function
@@ -44,11 +47,11 @@ let rec string_of_expr = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-let includes = "#include <stdio.h>\n#include <stdbool.h>\n"
 
 (* program *)
 let string_of_program (input, output, funcs, stmts) = 
-    includes ^ "int main() \n{\n//input\n" ^ String.concat "" (List.map string_of_vdecl input) ^ "\n"
-  ^  "//output\n" ^ String.concat "" (List.map string_of_vdecl output) ^ "\n" 
+     "public static class program \n{\n//input\n" ^ String.concat "" (List.map
+     string_of_global input) ^ "\n"
+  ^  "//output\n" ^ String.concat "" (List.map string_of_global output) ^ "\n" 
   ^ String.concat "" (List.map string_of_stmt stmts) ^ "\nreturn 0;\n}\n"
 
