@@ -4,9 +4,10 @@ open Ast
 (* primitive types *)
 let string_of_type = function 
       Int -> "int"
-    | Float -> "float"
-    | String -> "string"
-    | Boolean -> "bool"
+    | Float -> "double"
+    | String -> "char *"
+    | Boolean -> "int"
+    | Enum -> "typedef enum"
 
 (* type declaration *)
 let string_of_vdecl vd = string_of_type vd.vtype ^ " " ^ vd.vname ^";\n"
@@ -15,6 +16,7 @@ let string_of_vdecl vd = string_of_type vd.vtype ^ " " ^ vd.vname ^";\n"
 let rec string_of_expr = function
    (* String_literal(l) -> "\"" ^ l ^ "\"" *)
     String_literal(l) -> "\"" ^ l ^ "\""
+  | Int_literal(l) -> string_of_int l
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
@@ -45,8 +47,7 @@ let rec string_of_expr = function
 
 (* program *)
 let string_of_program (input, output, funcs, stmts) = 
-    String.concat "void main() \n{\n//input\n" (List.map string_of_vdecl input) ^ "\n"
-  ^ String.concat "//output\n" (List.map string_of_vdecl output) ^ "\n"
-  (* add function declarations here *)
-  ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n}"
+    "void main() \n{\n//input\n" ^ String.concat "" (List.map string_of_vdecl input) ^ "\n"
+  ^  "//output\n" ^ String.concat "" (List.map string_of_vdecl output) ^ "\n" 
+  ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n}\n"
 

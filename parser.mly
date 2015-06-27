@@ -32,8 +32,8 @@
 
 program:
     /* nothing */ { [], [], [], [] }
- | INPUT RBRACE vdecl_list LBRACE OUTPUT LBRACE vdecl_list RBRACE fdecl_list
-   MODEL LBRACE stmt_list RBRACE { $3, $7, $9, $12 }
+ | INPUT LBRACE vdecl_list RBRACE OUTPUT LBRACE vdecl_list RBRACE fdecl_list
+   MODEL LBRACE stmt_list RBRACE { $3, $7, $9, $12 } 
 
 fdecl_list:
     /* nothing */ { [] }
@@ -82,6 +82,7 @@ vdecl_opt:
   | vdecl_list   { List.rev $1 }
 
 vdecl_list:
+    /* nothing */ { [] }
   | type_decl                  { [$1] }
   | vdecl_list COMMA type_decl SEMI { $3 :: $1 }
 
