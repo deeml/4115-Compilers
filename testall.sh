@@ -66,14 +66,14 @@ Check() {
     #Run "$PROBL" "<" $1 ">" ${basename}.i.out &&
     #Compare ${basename}.i.out ${reffile}.out ${basename}.i.diff
 
-    generatedfiles="$generatedfiles ${basename}.c.out" &&
-    Run "$PROBL" "<" $1 ">" ${basename}.c.out &&
-    Compare ${basename}.c.out ${reffile}.c ${basename}.c.diff
+    generatedfiles="$generatedfiles ${basename}.java" &&
+    Run "$PROBL" "<" $1 ">" ${basename}.java &&
+    Compare ${basename}.java ${reffile}.java ${basename}.diff.java
 
-    generatedfiles="$generatedfiles ${basename} ${basename}.out" &&
-    Run "gcc -xc -o " ${basename} " " ${basename}.c.out &&
-    Run "./${basename}" ">" ${basename}.out &&
-    Compare ${basename}.out ${reffile}.out ${basename}.out.diff
+    generatedfiles="$generatedfiles Program.class ${basename}.out" &&
+    Run "javac" ${basename}.java &&
+    Run "java program" ">" ${basename}.out &&
+    Compare ${basename}.out ${reffile}.out ${basename}.diff.out
 
     # Report the status and clean up the generated files
 

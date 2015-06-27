@@ -11,6 +11,7 @@ type dtype =
 
 type expr =
     String_literal of string
+  | Float_literal of float
   | Int_literal of int
   | Id of string
   | Binop of expr * op * expr

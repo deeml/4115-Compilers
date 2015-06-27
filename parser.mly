@@ -109,6 +109,7 @@ expr_opt:
 
 expr:
     INT_LITERAL      { Int_literal($1) }
+  | FLOAT_LITERAL    { Float_literal($1) }
   | STRING_LITERAL   { String_literal($1) }
   | ID               { Id($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
