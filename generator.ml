@@ -44,10 +44,11 @@ let rec string_of_expr = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
+let includes = "#include <stdio.h>\n#include <stdbool.h>\n"
 
 (* program *)
 let string_of_program (input, output, funcs, stmts) = 
-    "void main() \n{\n//input\n" ^ String.concat "" (List.map string_of_vdecl input) ^ "\n"
+    includes ^ "int main() \n{\n//input\n" ^ String.concat "" (List.map string_of_vdecl input) ^ "\n"
   ^  "//output\n" ^ String.concat "" (List.map string_of_vdecl output) ^ "\n" 
-  ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n}\n"
+  ^ String.concat "" (List.map string_of_stmt stmts) ^ "\nreturn 0;\n}\n"
 
