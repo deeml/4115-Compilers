@@ -8,7 +8,8 @@ class program
 
 	private static Random __rand = new Random(System.currentTimeMillis());
 	public static void main(String[] args){
-		System.out.println(2.47);
+		__rand = new Random(1234);
+System.out.println(__rand.nextFloat());
 
 		return ;
 	}

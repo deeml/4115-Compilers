@@ -86,11 +86,13 @@ vdecl_list:
   | type_decl                  { [$1] }
   | vdecl_list COMMA type_decl SEMI { $3 :: $1 }
 
-
-
 stmt_list:
     /* nothing */  { [] }
-  | stmt_list stmt { $2 :: $1 }
+  | stmt_list_opt { List.rev $1 }
+
+stmt_list_opt:
+    /* nothing */  { [] }
+  | stmt_list_opt stmt { $2 :: $1 }
 
 stmt:
     expr SEMI { Expr($1) }

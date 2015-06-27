@@ -1,0 +1,7 @@
+input{}
+output{}
+model
+{
+	srand(1234);
+    print(rand());
+}

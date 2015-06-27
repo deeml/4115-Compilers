@@ -32,6 +32,8 @@ let rec string_of_expr = function
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) -> (match f with
     | "print" -> "System.out.println(" ^ String.concat ", " (List.map string_of_expr el)^")"
+    | "srand" -> "__rand = new Random(" ^ String.concat ", " (List.map string_of_expr el)^ ")"
+    | "rand"  -> "__rand.nextFloat()"
     | _  ->  f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
     )
       
@@ -51,14 +53,17 @@ let rec string_of_expr = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
+let imports = "import java.util.*;\n\n"
 
 (* program *)
 let string_of_program (input, output, funcs, stmts) = 
-     "class program \n{\n"
-        ^ "\t//input\n" ^ String.concat "" (List.map string_of_global input) ^ "\n"
-        ^  "\t//output\n" ^ String.concat "" (List.map string_of_global output) ^ "\n" 
-        ^ "\tpublic static void main(String[] args){\n"
-            ^ "\t\t" ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n\t\treturn ;\n"
-        ^ "\t}\n"
-     ^ "}\n"
+  imports
+  ^ "class program \n{\n"
+    ^ "\t//input\n" ^ String.concat "" (List.map string_of_global input) ^ "\n"
+    ^ "\t//output\n" ^ String.concat "" (List.map string_of_global output) ^ "\n" 
+    ^ "\tprivate static Random __rand = new Random(System.currentTimeMillis());\n"
+    ^ "\tpublic static void main(String[] args){\n"
+      ^ "\t\t" ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n\t\treturn ;\n"
+    ^ "\t}\n"
+  ^ "}\n"
 
