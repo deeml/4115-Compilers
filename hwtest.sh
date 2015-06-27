@@ -6,6 +6,7 @@ echo "======scanner.ml======"
 ocamllex scanner.mll
 echo "======parser.mly======"
 ocamlyacc parser.mly
+echo "======parser.mli======"
 ocamlc parser.mli
 echo "======generator.ml===="
 ocamlc generator.ml

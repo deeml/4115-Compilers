@@ -7,7 +7,7 @@ type dtype =
   | String
   | Enum
   (* | Array of dtype * int *)
-   (* TODO: array, add 2d arrays, enums *)
+  (* TODO: array, add 2d arrays, enums *)
 
 type expr =
     String_literal of string
@@ -19,12 +19,12 @@ type expr =
   | Noexpr
 
 type stmt =
-    Block of stmt
+    Block of stmt list
   | Expr of expr
   | Return of expr
-  | If of expr * stmt list * stmt list
-  | For of expr * expr * expr * stmt list
-  | While of expr * stmt list
+  | If of expr * stmt * stmt 
+  | For of expr * expr * expr * stmt 
+  | While of expr * stmt 
 
 type var_decl = {
     vname : string;

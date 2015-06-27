@@ -94,12 +94,13 @@ stmt_list:
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
-  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE %prec NOELSE { If($3, $6, Block([])) }
-  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE  
+ /* | IF LPAREN expr RPAREN LBRACE stmt RBRACE %prec NOELSE { If($3, $6,
+  Block([])) } */
+  | IF LPAREN expr RPAREN LBRACE stmt RBRACE ELSE LBRACE stmt RBRACE  
      { If($3, $6, $10) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE stmt_list RBRACE
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE stmt RBRACE
      { For($3, $5, $7, $10) }
-  | WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE { While($3, $6) }
+  | WHILE LPAREN expr RPAREN LBRACE stmt RBRACE { While($3, $6) }
 
 expr_opt:
     /* nothing */ { Noexpr }
