@@ -19,23 +19,23 @@ type expr =
   | Call of string * expr list
   | Noexpr
 
+type var_decl = {
+    vname : string;
+    vtype : dtype;
+  }
+
 type stmt =
     Block of stmt list
   | Expr of expr
   | Return of expr
   | If of expr * stmt * stmt 
   | For of expr * expr * expr * stmt 
-  | While of expr * stmt 
-
-type var_decl = {
-    vname : string;
-    vtype : dtype;
-  }
+  | While of expr * stmt
+  | Vdecl of var_decl 
   
 type func_decl = {
     fname : string;
     formals : var_decl list; 
-    locals : var_decl list;
     body : stmt list;
     ret_type : dtype;
   }

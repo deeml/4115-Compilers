@@ -40,14 +40,12 @@ fdecl_list:
   | fdecl_list fdecl { $2 :: $1 }
 
 fdecl:
-   FUNC ID LPAREN formals_opt RPAREN COLON dtype LBRACE vdecl_list stmt_list RBRACE
+   FUNC ID LPAREN formals_opt RPAREN COLON dtype LBRACE stmt_list RBRACE
      { { fname = $2;
 	   formals = $4;
-     body = $10;
-     locals = $9;
+     body = $9;
      ret_type = $7 } }
      
-
 dtype: 
     INT     { Int }
   | FLOAT   { Float }
@@ -70,12 +68,9 @@ formal_list:
   | formal_list COMMA type_decl { $3 :: $1 }
 
 type_decl:
-    INT ID { { vname = $2; vtype = Int } }
-  | FLOAT ID  { { vname = $2; vtype = Float } }
-  | BOOLEAN ID  { { vname = $2; vtype = Boolean } }
-  | STRING ID  { { vname = $2; vtype = String } }
-  /*TODO: add enums and arrays */
-
+    dtype ID { { vname = $2; vtype = $1 } }
+  /*| dtype ID SEMI { { vname = $2; vtype = $1 } } */
+ /* TODO: add enums and arrays */
 
 vdecl_opt:
     /* nothing */ { [] }
@@ -83,8 +78,10 @@ vdecl_opt:
 
 vdecl_list:
     /* nothing */ { [] }
-  | type_decl                  { [$1] }
+  | type_decl                   { [$1] }
+  | vdecl_list SEMI type_decl       { $3 :: $1 }
   | vdecl_list COMMA type_decl SEMI { $3 :: $1 }
+  | vdecl_list SEMI      { $1 }
 
 stmt_list:
     /* nothing */  { [] }
@@ -97,13 +94,14 @@ stmt_list_opt:
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
- /* | IF LPAREN expr RPAREN LBRACE stmt RBRACE %prec NOELSE { If($3, $6,
-  Block([])) } */
-  | IF LPAREN expr RPAREN LBRACE stmt RBRACE ELSE LBRACE stmt RBRACE  
-     { If($3, $6, $10) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACE stmt RBRACE
-     { For($3, $5, $7, $10) }
-  | WHILE LPAREN expr RPAREN LBRACE stmt RBRACE { While($3, $6) }
+  | LBRACE stmt_list RBRACE { Block(List.rev $2) } 
+  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) } 
+  | IF LPAREN expr RPAREN stmt ELSE stmt 
+     { If($3, $5, $7) }
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN  stmt
+     { For($3, $5, $7, $9) }
+  | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
+  | type_decl SEMI { Vdecl($1) }
 
 expr_opt:
     /* nothing */ { Noexpr }
