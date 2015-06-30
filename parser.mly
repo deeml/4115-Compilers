@@ -117,6 +117,7 @@ expr:
   | MINUS expr %prec UMINUS { Binop(Int_literal(0), Sub, $2) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
   | expr DIVIDE expr { Binop($1, Div,   $3) }
+  | expr EXPONENT expr { Binop($1, Exp, $3)}
   | expr EQ     expr { Binop($1, Equal, $3) }
   | expr NEQ    expr { Binop($1, Neq,   $3) }
   | expr LT     expr { Binop($1, Less,  $3) }

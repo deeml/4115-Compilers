@@ -26,17 +26,24 @@ let rec string_of_expr = function
   | Int_literal(l) -> string_of_int l
   | Id(s) -> s
   | Binop(e1, o, e2) ->
-      string_of_expr e1 ^ " " ^
-      (match o with
-	    Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/" 
-      | Equal -> "==" | Neq -> "!="
-      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">=") ^ " " ^
-      string_of_expr e2
+    (match o with
+        Exp -> "Math.pow(" ^ string_of_expr e1 ^ "," ^ string_of_expr e2 ^ ")"
+      | _ ->
+            string_of_expr e1 ^ " " ^
+            (match o with
+      	      Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
+            | Equal -> "==" | Neq -> "!="
+            | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
+            | _ -> "") ^ " " ^
+            string_of_expr e2
+    )
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) -> (match f with
     | "print" -> "System.out.println(" ^ String.concat ", " (List.map string_of_expr el)^")"
     | "srand" -> "__rand = new Random(" ^ String.concat ", " (List.map string_of_expr el)^ ")"
     | "rand"  -> "__rand.nextFloat()"
+    | "log"   -> "Math.log(" ^ String.concat ", " (List.map string_of_expr el)^ ")"
+    | "sqrt"  -> "Math.sqrt(" ^ String.concat ", " (List.map string_of_expr el)^ ")"
     | _  ->  f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
     )
       
@@ -63,7 +70,7 @@ let rec string_of_expr = function
         | Boolean -> " = False;\n"
         | String -> " = null;\n"
 
-let imports = "import java.util.*;\n\n"
+let imports = "import java.util.*;\nimport java.lang.*;\n\n"
 
 let string_of_fdecl f = "private static " ^ string_of_type f.ret_type ^ " "
                       ^ f.fname ^ "("  

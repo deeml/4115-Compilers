@@ -1,15 +1,17 @@
 import java.util.*;
+import java.lang.*;
 
 class program 
 {
-	//input
+//input
 
-	//output
+//output
 
-	private static Random __rand = new Random(System.currentTimeMillis());
-	public static void main(String[] args){
-		System.out.println("hello world");
+private static Random __rand = new Random(System.currentTimeMillis());
 
-		return ;
-	}
+public static void main(String[] args){
+System.out.println("hello world");
+
+return ;
+}
 }

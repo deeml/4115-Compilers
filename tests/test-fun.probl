@@ -1,0 +1,9 @@
+input{}
+output{}
+fun test_fun(float a, float b): float {
+	return a + b + 2.718282 ^ 2;
+}
+model
+{
+    print(test_fun(1.0, 0.0));
+}
