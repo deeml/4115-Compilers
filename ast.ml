@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
+type op = Add | Sub | Mult | Div | Exp | Equal | Neq | Less | Leq | Greater | Geq
 
 type dtype = 
     Int

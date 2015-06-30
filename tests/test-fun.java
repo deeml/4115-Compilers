@@ -8,10 +8,13 @@ class program
 //output
 
 private static Random __rand = new Random(System.currentTimeMillis());
+private static double test_fun(double a,double b)
+{
+return a + b + Math.pow(2.718282,2);
+}
 
 public static void main(String[] args){
-__rand = new Random(1234);
-System.out.println(__rand.nextFloat());
+System.out.println(test_fun(1., 0.));
 
 return ;
 }
