@@ -54,11 +54,6 @@ dtype:
   | ENUM    { Enum }
 /*  | dtype LSQPAREN INT_LITERAL RSQPAREN { Array($1, $3) } */
 
-block:
-    /* nothing */  { [], [] }
-  | vdecl_opt block { ($1::fst $2) , snd $2 }
-  | stmt block { fst $2, ($1::snd $2) }
-
 formals_opt:
     /* nothing */ { [] }
   | formal_list   { List.rev $1 }
@@ -72,20 +67,20 @@ type_decl:
   /*| dtype ID SEMI { { vname = $2; vtype = $1 } } */
  /* TODO: add enums and arrays */
 
+/*
 vdecl_opt:
-    /* nothing */ { [] }
+     nothing  { [] }
   | vdecl_list   { List.rev $1 }
-
+*/
 vdecl_list:
-    /* nothing */ { [] }
+  /*  nothing */  { [] }
   | type_decl                   { [$1] }
   | vdecl_list SEMI type_decl       { $3 :: $1 }
   | vdecl_list COMMA type_decl SEMI { $3 :: $1 }
   | vdecl_list SEMI      { $1 }
 
 stmt_list:
-    /* nothing */  { [] }
-  | stmt_list_opt { List.rev $1 }
+    stmt_list_opt { List.rev $1 }
 
 stmt_list_opt:
     /* nothing */  { [] }
