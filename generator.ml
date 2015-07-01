@@ -34,6 +34,7 @@ let rec string_of_expr = function
       	      Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
             | Equal -> "==" | Neq -> "!="
             | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
+            | And -> "&&" | Or -> "||"
             | _ -> "") ^ " " ^
             string_of_expr e2
     )
