@@ -110,7 +110,7 @@ stmt:
      { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | type_decl SEMI { Vdecl($1) }
-  | var_list PROBASSIGN ID LPAREN actuals_opt RPAREN { Pcall($1, $3, $5)  } 
+  | var_list PROBASSIGN ID LPAREN actuals_opt RPAREN SEMI { Pcall($1, $3, $5)  } 
 
 expr_opt:
     /* nothing */ { Noexpr }

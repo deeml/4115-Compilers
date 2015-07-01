@@ -71,7 +71,7 @@ let string_of_pcassign i pn = "double " ^ pn ^ " = res[" ^ string_of_int i ^ "];
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | Pcall(p, f, a) -> "double[] res = " ^ f ^ ".run(" ^ (* TODO find replacement for List.mapi *) 
-                       String.concat ", " (List.map string_of_expr a) ^ ";\n"
+                       String.concat ", " (List.map string_of_expr a) ^ ");\n"
                       (* ^ String.concat "" (List.mapi string_of_pcassign p) *)
   | Vdecl(v) -> 
      string_of_type v.vtype ^ " " ^ v.vname 
