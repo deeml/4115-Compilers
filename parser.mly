@@ -46,8 +46,16 @@ fdecl:
    FUNC ID LPAREN formals_opt RPAREN COLON dtype LBRACE stmt_list RBRACE
      { { fname = $2;
 	   formals = $4;
+       params = [];
      body = $9;
      ret_type = $7 } }
+ | FUNC PROBASSIGN ID LPAREN formals_opt RPAREN COLON actuals_opt LBRACE
+  stmt_list RBRACE
+    { { fname = $3;
+        formals = $5;
+        params = $8;
+        body = $10;
+        ret_type = Float } }
      
 dtype: 
     INT     { Int }
@@ -87,6 +95,10 @@ stmt_list_opt:
     /* nothing */  { [] }
   | stmt_list_opt stmt { $2 :: $1 }
 
+var_list: 
+    ID  { [$1] }
+  | var_list COMMA ID  { $3 :: $1 }
+
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
@@ -98,6 +110,7 @@ stmt:
      { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | type_decl SEMI { Vdecl($1) }
+  | var_list PROBASSIGN ID LPAREN actuals_opt RPAREN { Pcall($1, $3, $5)  } 
 
 expr_opt:
     /* nothing */ { Noexpr }

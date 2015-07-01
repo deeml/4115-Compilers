@@ -15,7 +15,6 @@ type expr =
   | Int_literal of int
   | Id of string
   | Binop of expr * op * expr
-  | Exponent of expr * expr
   | Lnot of expr
   | Assign of string * expr
   | Call of string * expr list
@@ -34,10 +33,12 @@ type stmt =
   | For of expr * expr * expr * stmt 
   | While of expr * stmt
   | Vdecl of var_decl 
+  | Pcall of string list * string * expr list 
   
 type func_decl = {
     fname : string;
-    formals : var_decl list; 
+    formals : var_decl list;
+    params : expr list; 
     body : stmt list;
     ret_type : dtype;
   }

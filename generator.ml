@@ -64,6 +64,8 @@ let rec string_of_expr = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+  | Pcall(p, f, a) -> "double[] res = " ^ f ^ "(" ^ 
+                       String.concat ", " (List.map string_of_expr a) ^ ";\n"
   | Vdecl(v) -> 
      string_of_type v.vtype ^ " " ^ v.vname 
      ^ match v.vtype with
@@ -76,10 +78,17 @@ let imports = "import java.util.*;\nimport java.lang.*;\n\n"
 
 let string_of_fdecl f = "private static " ^ string_of_type f.ret_type ^ " "
                       ^ f.fname ^ "("  
-                      ^ String.concat "," (List.map string_of_formal f.formals) 
+                      ^ String.concat ", " (List.map string_of_formal f.formals) 
                       ^ ")\n"
                       ^ "{\n" ^ String.concat "" (List.map string_of_stmt f.body) 
                       ^ "}\n"
+
+(* TODO : figure out where to call this *)
+let string_of_pfdecl p = "private class " ^ p.fname 
+                         ^ "\n{\npublic float[] run(" ^ String.concat ", "
+                           (List.map string_of_formal p.formals) ^ ")\n{\n"
+                         ^ "BODY HERE\n" (*TODO*)
+                         ^ "}\n}\n"
 
 (* program *)
 let string_of_program (input, output, funcs, stmts) = 
