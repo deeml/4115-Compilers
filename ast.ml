@@ -1,13 +1,13 @@
-type op = Add | Sub | Mult | Div | Exp | Equal | Neq | Less | Leq | Greater | Geq | And | Or
+type op = Add | Sub | Mult | Div | Exp | Mod | Equal | Neq | Less | Leq | Greater | Geq | And | Or
 
 type dtype = 
     Int
   | Float
   | Boolean
   | String
-  | Enum
+  | Array of dtype * int
+  (* | Enum *)
   (* | Array of dtype * int *)
-  (* TODO: array, add 2d arrays, enums *)
 
 type expr =
     String_literal of string

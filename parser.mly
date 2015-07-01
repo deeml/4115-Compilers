@@ -62,8 +62,8 @@ dtype:
   | FLOAT   { Float }
   | BOOLEAN { Boolean }
   | STRING  { String }
-  | ENUM    { Enum }
-/*  | dtype LSQPAREN INT_LITERAL RSQPAREN { Array($1, $3) } */
+/*  | ENUM    { Enum } */
+  | dtype LSQRPAREN INT_LITERAL RSQRPAREN { Array($1, $3) } 
 
 formals_opt:
     /* nothing */ { [] }
