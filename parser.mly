@@ -19,11 +19,14 @@
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
+%left LOGICALAND LOGICALOR 
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE MODULO
+%left EXPONENT
 %nonassoc UMINUS
+%nonassoc LOGICALNOT
 
 %start program
 %type <Ast.program> program
@@ -32,7 +35,7 @@
 
 program:
     /* nothing */ { [], [], [], [] }
- | INPUT LBRACE vdecl_list RBRACE OUTPUT LBRACE vdecl_list RBRACE fdecl_list
+ | INPUT LBRACE vdecl_opt RBRACE OUTPUT LBRACE vdecl_opt RBRACE fdecl_list
    MODEL LBRACE stmt_list RBRACE { $3, $7, $9, $12 } 
 
 fdecl_list:
@@ -64,14 +67,12 @@ formal_list:
 
 type_decl:
     dtype ID { { vname = $2; vtype = $1 } }
-  /*| dtype ID SEMI { { vname = $2; vtype = $1 } } */
  /* TODO: add enums and arrays */
 
-/*
+
 vdecl_opt:
-     nothing  { [] }
-  | vdecl_list   { List.rev $1 }
-*/
+   vdecl_list   { List.rev $1 }
+
 vdecl_list:
   /*  nothing */  { [] }
   | type_decl                   { [$1] }
@@ -89,7 +90,7 @@ stmt_list_opt:
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
-  | LBRACE stmt_list RBRACE { Block(List.rev $2) } 
+  | LBRACE stmt_list RBRACE { Block($2) } 
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) } 
   | IF LPAREN expr RPAREN stmt ELSE stmt 
      { If($3, $5, $7) }
@@ -112,6 +113,7 @@ expr:
   | MINUS expr %prec UMINUS { Binop(Int_literal(0), Sub, $2) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
   | expr DIVIDE expr { Binop($1, Div,   $3) }
+  | expr EXPONENT expr { Binop($1, Exp, $3) } 
   | expr EQ     expr { Binop($1, Equal, $3) }
   | expr NEQ    expr { Binop($1, Neq,   $3) }
   | expr LT     expr { Binop($1, Less,  $3) }
@@ -120,6 +122,7 @@ expr:
   | expr GEQ    expr { Binop($1, Geq,   $3) }
   | expr LOGICALAND expr { Binop($1, And,   $3) }
   | expr LOGICALOR expr { Binop($1, Or,   $3) }
+  | LOGICALNOT expr  { Lnot($2) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }

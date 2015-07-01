@@ -39,6 +39,7 @@ let rec string_of_expr = function
             string_of_expr e2
     )
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Lnot(e) -> "!(" ^ string_of_expr e ^")"
   | Call(f, el) -> (match f with
     | "print" -> "System.out.println(" ^ String.concat ", " (List.map string_of_expr el)^")"
     | "srand" -> "__rand = new Random(" ^ String.concat ", " (List.map string_of_expr el)^ ")"

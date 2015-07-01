@@ -15,6 +15,8 @@ type expr =
   | Int_literal of int
   | Id of string
   | Binop of expr * op * expr
+  | Exponent of expr * expr
+  | Lnot of expr
   | Assign of string * expr
   | Call of string * expr list
   | Noexpr

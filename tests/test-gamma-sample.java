@@ -14,17 +14,24 @@ double gamma = 0.0;
 gamma = 0.;
 if (alpha <= 0. || beta <= 0.)
 {
-return 0 - 1.;
 System.out.println("alpha and beta must be positive.");
+return 0 - 1.;
 }
 else
 {
 }
 if (alpha < 1.)
 {
+double b = 0.0;
+double p = 0.0;
+int flag = 0;
+flag = 0;
+b = 1 + alpha * 0.3678794;
 while (flag == 0) {
+p = b * __rand.nextFloat();
 if (p > 1.)
 {
+gamma = 0 - Math.log(b - p / alpha);
 if (__rand.nextFloat() <= Math.pow(gamma,alpha - 1.))
 {
 flag = 1;
@@ -32,10 +39,10 @@ flag = 1;
 else
 {
 }
-gamma = 0 - Math.log(b - p / alpha);
 }
 else
 {
+gamma = Math.pow(p,1. / alpha);
 if (__rand.nextFloat() <= Math.pow(2.718282,0 - gamma))
 {
 flag = 1;
@@ -43,15 +50,8 @@ flag = 1;
 else
 {
 }
-gamma = Math.pow(p,1. / alpha);
 }
-p = b * __rand.nextFloat();
 }
-b = 1 + alpha * 0.3678794;
-flag = 0;
-int flag = 0;
-double p = 0.0;
-double b = 0.0;
 }
 else
 {
@@ -61,12 +61,12 @@ gamma = 0 - Math.log(__rand.nextFloat());
 }
 else
 {
-gamma = alpha * y;
+double y = 0.0;
+y = 0 - Math.log(__rand.nextFloat());
 while (__rand.nextFloat() > Math.pow(y * 1. - y,alpha - 1.)) {
 y = 0 - Math.log(__rand.nextFloat());
 }
-y = 0 - Math.log(__rand.nextFloat());
-double y = 0.0;
+gamma = alpha * y;
 }
 }
 return beta * gamma + lambda;
@@ -92,10 +92,10 @@ i = 0;
 double avg = 0.0;
 avg = 0.;
 while (i < 1000) {
-i = i + 1;
 avg = avg + gamma_sample(3., 3., 1.);
+i = i + 1;
 }
-System.out.println("close to 10");
+System.out.println("should be close to 10");
 System.out.println(avg / 1000);
 
 return ;
