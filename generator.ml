@@ -3,10 +3,10 @@ open Ast
 
 (* primitive types *)
 let rec string_of_type = function 
-      Int -> "int"
-    | Float -> "double"
+      Int -> "Integer"
+    | Float -> "Double"
     | String -> "String"
-    | Boolean -> "boolean"
+    | Boolean -> "Boolean"
     | Array(t, l) -> string_of_type t ^ "[]"
 
 
