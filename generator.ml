@@ -157,7 +157,6 @@ let string_convert_to_array var =
   var.vname ^ " = ("^ string_of_type var.vtype ^") VALUES_BY_NAME.get(\"" ^ var.vname^ "\").toArray(new " ^ string_array_type var.vtype ^ "[0]);\n"
 
 
-
 let string_of_get_input = 
   "String __csvFile = \"input.csv\";\n
     BufferedReader __br = null;\n
@@ -256,4 +255,3 @@ let string_of_program (input, output, funcs, stmts) =
      ^ String.concat "" (List.map string_of_stmt stmts) ^ "\nreturn ;\n"
     ^ "}\n"
   ^ "}\n"
-
