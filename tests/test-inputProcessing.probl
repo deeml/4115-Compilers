@@ -1,0 +1,8 @@
+input{
+	int[2] a;
+	float[2] b;
+	bool[2] c;
+	string[2] d;
+}
+output{}
+model{}

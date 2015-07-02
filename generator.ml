@@ -139,8 +139,98 @@ let string_of_fdecl f = if f.params = [] then
                                  string_of_rfdecl f 
                         else string_of_pfdecl f
 
+let string_array_type = function 
+      Int -> "Integer"
+    | Float -> "Double"
+    | String -> "String"
+    | Boolean -> "Boolean"
+    | Array(t, l) -> string_of_type t
 
-let imports = "import java.util.*;\nimport java.lang.*;\n\n"
+let string_create_arraylist var = 
+  "new ArrayList<" ^ string_array_type var.vtype ^ " >(Arrays.asList(" ^ var.vname ^ "))"
+
+let string_create_var_namemap var = "VALUES_BY_NAME.put(\"" ^ var.vname ^ "\", " ^ string_create_arraylist var ^ ");\n"
+
+let string_create_var_typemap var = "TYPES_OF_VARS.put(\"" ^ var.vname ^ "\", \"" ^ string_array_type var.vtype ^ "\");\n"
+
+let string_convert_to_array var = 
+  var.vname ^ " = ("^ string_of_type var.vtype ^") VALUES_BY_NAME.get(\"" ^ var.vname^ "\").toArray(new " ^ string_array_type var.vtype ^ "[0]);\n"
+
+
+
+let string_of_get_input = 
+  "String __csvFile = \"input.csv\";\n
+    BufferedReader __br = null;\n
+    String __line = \"\";\n 
+    String __csvSplitBy = \",\";\n 
+    try {\n
+    
+    ArrayList<String> __variables = new ArrayList<String>();\n
+    __br = new BufferedReader(new FileReader(__csvFile));\n
+    int __j = 0;\n
+    while ((__line = __br.readLine()) != null) {\n
+              String[] __result = __line.split(__csvSplitBy);\n
+
+              if (__j == 0)\n
+              { \n
+                int __size = __result.length;\n
+
+                for(int __i=0; __i<__size; ++__i)\n
+                {\n
+                  if (VALUES_BY_NAME.containsKey(__result[__i]))\n
+                  {
+                    __variables.add(__result[__i]);\n
+                  }
+                  else {__variables.add(\"\");}\n
+
+                  }\n
+                ++__j;\n
+                continue; \n
+    
+              }\n
+              
+              for(int __i=0; __i < __variables.size(); ++__i) \n
+              {\n
+                if (! __variables.get(__i).equals(\"\"))\n
+                    {\n
+                    if(TYPES_OF_VARS.get(__variables.get(__i)).equals(\"Integer\"))\n
+                    {\n
+                      VALUES_BY_NAME.get(__variables.get(__i)).add(Integer.parseInt(__result[__i]));\n
+                    }\n
+                    else if(TYPES_OF_VARS.get(__variables.get(__i)).equals(\"Double\"))
+                    {\n
+                      VALUES_BY_NAME.get(__variables.get(__i)).add(Double.parseDouble(__result[__i]));\n
+                    }\n
+                    else if(TYPES_OF_VARS.get(__variables.get(__i)).equals(\"Boolean\"))\n
+                    {\n
+                      VALUES_BY_NAME.get(__variables.get(__i)).add(Boolean.parseBoolean(__result[__i]));\n
+                    }\n
+                    else \n
+                    {\n
+                      VALUES_BY_NAME.get(__variables.get(__i)).add(__result[__i]);\n
+                    }\n
+              }\n
+
+         
+      }\n
+         
+    }} catch (FileNotFoundException e) {\n
+            e.printStackTrace();\n
+            System.out.println(\"ProbL: Error - file not found.\");\n
+          } catch (IOException e) {\n
+            //e.printStackTrace();\n
+          } finally {\n
+            if (__br != null) {\n
+              try {\n
+                __br.close();\n
+              } catch (IOException e) {\n
+              //e.printStackTrace();\n
+
+              }\n
+            }\n
+          }\n"
+
+let imports = "import java.io.*;\nimport java.util.*;\nimport java.lang.*;\n\n"
 
 (* program *)
 let string_of_program (input, output, funcs, stmts) = 
@@ -148,9 +238,21 @@ let string_of_program (input, output, funcs, stmts) =
   ^ "class program \n{\n"
     ^ "//input\n" ^ String.concat "" (List.map string_of_vdecl input) ^ "\n"
     ^ "//output\n" ^ String.concat "" (List.map string_of_vdecl output) ^ "\n" 
+
+    ^ "public static HashMap<String, ArrayList> VALUES_BY_NAME;\n"
+    ^ "public static HashMap<String, String> TYPES_OF_VARS;\n"
+
     ^ "private static Random __rand = new Random(System.currentTimeMillis());\n"
     ^  String.concat "" (List.map string_of_fdecl funcs) ^ "\n"
     ^ "public static void main(String[] args){\n"
+
+    ^ "VALUES_BY_NAME = new HashMap<String, ArrayList>();\n"
+    ^ "TYPES_OF_VARS = new HashMap<String, String>();\n"
+    ^ String.concat "" (List.map string_create_var_namemap input) ^ "\n"
+    ^ String.concat "" (List.map string_create_var_typemap input) ^ "\n"
+    ^ string_of_get_input ^ "\n"
+    ^ String.concat "" (List.map string_convert_to_array input) ^ "\n"
+
      ^ String.concat "" (List.map string_of_stmt stmts) ^ "\nreturn ;\n"
     ^ "}\n"
   ^ "}\n"
