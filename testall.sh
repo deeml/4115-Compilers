@@ -67,7 +67,7 @@ Check() {
     #Compare ${basename}.i.out ${reffile}.out ${basename}.i.diff
 
     generatedfiles="$generatedfiles ${basename}.java" &&
-    Run "$PROBL" "<" $1 ">" ${basename}.java &&
+    Run "$PROBL" $1 ">" ${basename}.java &&
     Compare ${basename}.java ${reffile}.java ${basename}.diff.java
 
     generatedfiles="$generatedfiles Program.class ${basename}.out" &&
