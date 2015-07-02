@@ -39,8 +39,12 @@ program:
    MODEL LBRACE stmt_list RBRACE { $3, $7, $9, $12 } 
 
 fdecl_list:
+  | fdecl_opt { List.rev $1 }
+
+fdecl_opt:
     /* nothing */ { [] }
-  | fdecl_list fdecl { $2 :: $1 }
+  | fdecl_opt fdecl { $2 :: $1 }
+
 
 fdecl:
    FUNC ID LPAREN formals_opt RPAREN COLON dtype LBRACE stmt_list RBRACE
