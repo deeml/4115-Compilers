@@ -72,7 +72,7 @@ Check() {
 
     generatedfiles="$generatedfiles Program.class ${basename}.out" &&
     Run "javac" ${basename}.java &&
-    Run "java program" ">" ${basename}.out &&
+    Run "java program input.csv" ">" ${basename}.out && 
     Compare ${basename}.out ${reffile}.out ${basename}.diff.out
 
     # Report the status and clean up the generated files

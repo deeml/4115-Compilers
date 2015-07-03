@@ -4,7 +4,7 @@ open Ast
 (* primitive types *)
 let rec string_of_type = function 
       Int -> "Integer"
-    | Float -> "Double"
+    | Float -> "double"
     | String -> "String"
     | Boolean -> "Boolean"
     | Array(t, l) -> string_of_type t ^ "[]"
