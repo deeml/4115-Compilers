@@ -45,7 +45,7 @@ fun gamma_sample(float alpha, float beta, float lambda): float {
     } else {
       float y;
       y = -log(rand());
-      while (rand() > (y * (1.0 - y))^(alpha - 1.0)) {
+      while (rand() > (y * (2.718282^(1.0 - y)))^(alpha - 1.0)) {
         y = -log(rand());
       }
       gamma = alpha * y;
@@ -57,12 +57,14 @@ fun gamma_sample(float alpha, float beta, float lambda): float {
 /* sample from p(x,y)=kx^2*exp(-xy^2-y^2+2y-4x) */
 fun~ bivar(): x, y {
   x = gamma_sample(3.0,y*y+4.0,0.0);
-  y = random_sample(1.0/(x+1),1.0/sqrt(2*x+2));
+  y = 1.0/(x+1) + random_sample()/sqrt(2*x+2);
 }
 
 model
 {
   srand(1234);
+  float x;
+  float y;
   x, y ~ bivar();
   print(x);
   print(y);

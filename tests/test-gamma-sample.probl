@@ -45,7 +45,7 @@ fun gamma_sample(float alpha, float beta, float lambda): float {
     } else {
       float y;
       y = -log(rand());
-      while (rand() > (y * (1.0 - y))^(alpha - 1.0)) {
+      while (rand() > (y * (2.718282^(1.0 - y)))^(alpha - 1.0)) {
         y = -log(rand());
       }
       gamma = alpha * y;

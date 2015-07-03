@@ -55,8 +55,6 @@ let rec string_of_expr = function
       
   | Noexpr -> ""
 
-let string_of_pcassign i pn = "double " ^ pn ^ " = res[" ^ string_of_int i ^ "];\n"
-
 (* statement *)
  let rec string_of_stmt = function
     Block(stmts) ->
@@ -70,9 +68,11 @@ let string_of_pcassign i pn = "double " ^ pn ^ " = res[" ^ string_of_int i ^ "];
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | Pcall(p, f, a) -> "double[] res = " ^ f ^ ".run(" ^ (* TODO find replacement for List.mapi *) 
-                       String.concat ", " (List.map string_of_expr a) ^ ");\n"
-                      (* ^ String.concat "" (List.mapi string_of_pcassign p) *)
+  | Pcall(p, f, a) ->  let string_of_pcassign pn = pn ^ " = __" ^ f ^ "." ^ pn ^ ";\n" in
+                          f ^ " __" ^ f ^ " = new program." ^ f ^ "();\n" 
+                        ^ "__" ^ f ^ ".run(" 
+                              ^ String.concat ", " (List.map string_of_expr a) ^ ");\n"
+                        ^ String.concat "" (List.map string_of_pcassign p)
   | Vdecl(v) -> 
      string_of_type v.vtype ^ " " ^ v.vname 
      ^ match v.vtype with
@@ -98,13 +98,13 @@ let sid pn = string_of_expr pn
 
 let string_of_param pn = string_of_vdecl { vname = (sid pn) ; vtype = Float }   
 
-let string_of_pinit pn = "double[] __" ^ (sid pn) ^ " = new double[5000];\n"
+let string_of_pinit pn = "double[] __" ^ (sid pn) ^ " = new double[500];\n"
                        ^ (sid pn) ^ " = __rand.nextFloat();\n"
 
 let string_of_pincr pn = "__" ^ (sid pn) ^ "[i] = " ^ (sid pn) ^ ";\n" 
                        
-let string_of_ploop pfd = "for (int i=0; i<5000; i++){\n" 
-                          ^ "for (int j=0;j<100;j++){\n "
+let string_of_ploop pfd = "for (int i=0; i<500; i++){\n" 
+                          ^ "for (int j=0;j<10;j++){\n "
                           ^ String.concat "" (List.map string_of_stmt pfd.body)
                           ^ "}\n" ^ String.concat "" (List.map string_of_pincr pfd.params)
                           ^ "}\n"
@@ -112,7 +112,7 @@ let string_of_ploop pfd = "for (int i=0; i<5000; i++){\n"
 let string_of_mean pn = (sid pn) ^ " = mean(__" ^ (sid pn) ^ ");\n"  
 
 
-let string_of_pfdecl p = "private class " ^ p.fname
+let string_of_pfdecl p = "private static class " ^ p.fname
                          ^ "\n{\n" ^ String.concat ""
                                      (List.map string_of_param p.params)
                          ^ "\n"
@@ -121,7 +121,7 @@ let string_of_pfdecl p = "private class " ^ p.fname
                          ^ "for(double i : d) { sum += i; } return "
                          ^ "sum/((double) d.length);\n}"
 
-                         ^ "\npublic double[] run(" ^ String.concat ", "
+                         ^ "\npublic void run(" ^ String.concat ", "
                            (List.map string_of_formal p.formals) ^ ")\n{\n"
 
                          ^ "double[] res = new double[" ^ string_of_int
@@ -132,8 +132,7 @@ let string_of_pfdecl p = "private class " ^ p.fname
                          ^ string_of_ploop p
                          
                          ^ String.concat "" (List.map string_of_mean p.params) 
-                         ^ "res = {" ^ String.concat ", " (List.map sid p.params) ^ "};\n"
-                         ^ "return res;\n}\n}"
+                         ^ "\n}\n}"
 
 let string_of_fdecl f = if f.params = [] then 
                                  string_of_rfdecl f 
